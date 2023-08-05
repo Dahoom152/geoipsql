@@ -32,19 +32,19 @@ def write_to_sql(df, output_file1, output_file2):
 
         insert_values = []
         for i, (_, row) in enumerate(df.iterrows()):
-            insert_values.append(f"('{row['network']}', {row['start']}, {row['end']}, '{row['country_code']}', '{row['state']}', '{row['city']}')")
+            insert_values.append(f"('{row['network']}',{row['start']},{row['end']},'{row['country_code']}','{row['state']}','{row['city']}')")
             if (i + 1) % 5000 == 0:
                 if i < half:
-                    f1.write(", ".join(insert_values) + ", ")
+                    f1.write(",".join(insert_values) + ",")
                 else:
-                    f2.write(", ".join(insert_values) + ", ")
+                    f2.write(",".join(insert_values) + ",")
                 insert_values = []
         
         if insert_values:
             if i < half:
-                f1.write(", ".join(insert_values) + ";")
+                f1.write(",".join(insert_values) + ";")
             else:
-                f2.write(", ".join(insert_values) + ";")
+                f2.write(",".join(insert_values) + ";")
 
 if __name__ == "__main__":
     df = read_and_extract('geolocationDatabaseIPv4.csv')

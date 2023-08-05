@@ -38,6 +38,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add db.sql.gz
+        git add db1.sql.gz
+        git add db2.sql.gz
         git commit -m "Add generated SQL file"
         git push
