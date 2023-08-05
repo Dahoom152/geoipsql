@@ -24,21 +24,28 @@ def process_network(network):
 
     return pd.Series([start, end])
 
-def write_to_sql(df, output_file):
-    with gzip.open(output_file, 'wt') as f:
-        f.write("INSERT INTO ipv4 (network, start, end, country_code, state, city) VALUES ")
+def write_to_sql(df, output_file1, output_file2):
+    half = len(df) // 2
+    with gzip.open(output_file1, 'wt') as f1, gzip.open(output_file2, 'wt') as f2:
+        f1.write("INSERT INTO your_table (network, start, end, country_code, state, city) VALUES ")
+        f2.write("INSERT INTO your_table (network, start, end, country_code, state, city) VALUES ")
+
+        insert_values = []
+        for i, (_, row) in enumerate(df.iterrows()):
+            insert_values.append(f"('{row['network']}', {row['start']}, {row['end']}, '{row['country_code']}', '{row['state']}', '{row['city']}')")
+            if (i + 1) % 5000 == 0:
+                if i < half:
+                    f1.write(", ".join(insert_values) + ", ")
+                else:
+                    f2.write(", ".join(insert_values) + ", ")
+                insert_values = []
         
-        # Batch the writes to the file
-        batch_size = 5000
-        for i in range(0, len(df), batch_size):
-            batch = df[i:i + batch_size]
-            insert_values = []
-            for _, row in batch.iterrows():
-                insert_values.append(f"('{row['network']}', {row['start']}, {row['end']}, '{row['country_code']}', '{row['state']}', '{row['city']}')")
-            f.write(",\n".join(insert_values) + ";\n")
-            if i + batch_size < len(df):
-                f.write("INSERT INTO your_table (network, start, end, country_code, state, city) VALUES ")
+        if insert_values:
+            if i < half:
+                f1.write(", ".join(insert_values) + ";")
+            else:
+                f2.write(", ".join(insert_values) + ";")
 
 if __name__ == "__main__":
     df = read_and_extract('geolocationDatabaseIPv4.csv')
-    write_to_sql(df, 'db.sql.gz')
+    write_to_sql(df, 'db1.sql.gz', 'db2.sql.gz')
