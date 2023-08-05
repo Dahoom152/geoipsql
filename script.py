@@ -12,6 +12,7 @@ def read_and_extract(file_path):
     return df
 
 def process_network(network):
+    network = network.strip().rstrip(',')
     if '-' in network:
         start, end = network.split('-')
         start = int(ip.ip_network(start.strip()).network_address)
