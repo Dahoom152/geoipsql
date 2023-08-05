@@ -1,0 +1,25 @@
+name: Process CSV and Generate SQL
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  process_csv:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: pip install pandas
+
+    - name: Process CSV and Generate SQL
+      run: python script.py
