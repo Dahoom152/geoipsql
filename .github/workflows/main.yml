@@ -19,7 +19,22 @@ jobs:
         python-version: '3.x'
 
     - name: Install dependencies
-      run: pip install pandas
+      run: |
+        pip install pandas
+        sudo apt-get install unzip wget
+
+    - name: Download and unzip CSV
+      run: |
+        wget https://github.com/NikolaiT/IP-Address-API/raw/main/databases/geolocationDatabaseIPv4.csv.zip
+        unzip geolocationDatabaseIPv4.csv.zip
 
     - name: Process CSV and Generate SQL
       run: python script.py
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add db.sql
+        git commit -m "Add generated SQL file"
+        git push
