@@ -24,28 +24,38 @@ def process_network(network):
 
     return pd.Series([start, end])
 
-def write_to_sql(df, output_file1, output_file2):
-    half = len(df) // 2
-    with gzip.open(output_file1, 'wt') as f1, gzip.open(output_file2, 'wt') as f2:
-        f1.write("INSERT INTO your_table (network, start, end, country_code, state, city) VALUES ")
-        f2.write("INSERT INTO your_table (network, start, end, country_code, state, city) VALUES ")
+def write_to_sql(df, output_file1, output_file2, output_file3, output_file4):
+    quarter = len(df) // 4
+    with gzip.open(output_file1, 'wt') as f1, gzip.open(output_file2, 'wt') as f2, gzip.open(output_file3, 'wt') as f3, gzip.open(output_file4, 'wt') as f4:
+        f1.write("INSERT INTO ipv4(network,start,end,country_code,state,city) VALUES ")
+        f2.write("INSERT INTO ipv4(network,start,end,country_code,state,city) VALUES ")
+        f3.write("INSERT INTO ipv4(network,start,end,country_code,state,city) VALUES ")
+        f4.write("INSERT INTO ipv4(network,start,end,country_code,state,city) VALUES ")
 
         insert_values = []
         for i, (_, row) in enumerate(df.iterrows()):
             insert_values.append(f"('{row['network']}',{row['start']},{row['end']},'{row['country_code']}','{row['state']}','{row['city']}')")
             if (i + 1) % 5000 == 0:
-                if i < half:
+                if i < quarter:
                     f1.write(",".join(insert_values) + ",")
-                else:
+                elif i < 2 * quarter:
                     f2.write(",".join(insert_values) + ",")
+                elif i < 3 * quarter:
+                    f3.write(",".join(insert_values) + ",")
+                else:
+                    f4.write(",".join(insert_values) + ",")
                 insert_values = []
         
         if insert_values:
-            if i < half:
+            if i < quarter:
                 f1.write(",".join(insert_values) + ";")
-            else:
+            elif i < 2 * quarter:
                 f2.write(",".join(insert_values) + ";")
+            elif i < 3 * quarter:
+                f3.write(",".join(insert_values) + ";")
+            else:
+                f4.write(",".join(insert_values) + ";")
 
 if __name__ == "__main__":
     df = read_and_extract('geolocationDatabaseIPv4.csv')
-    write_to_sql(df, 'db1.sql.gz', 'db2.sql.gz')
+    write_to_sql(df, 'db1.sql.gz', 'db2.sql.gz', 'db3.sql.gz', 'db4.sql.gz')

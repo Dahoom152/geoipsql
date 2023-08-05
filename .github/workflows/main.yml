@@ -40,5 +40,7 @@ jobs:
         git config --local user.name "GitHub Action"
         git add db1.sql.gz
         git add db2.sql.gz
+        git add db3.sql.gz
+        git add db4.sql.gz
         git commit -m "Add generated SQL file"
         git push
