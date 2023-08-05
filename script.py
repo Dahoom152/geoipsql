@@ -15,10 +15,10 @@ def process_network(network):
     network = network.strip().rstrip(',')
     if '-' in network:
         start, end = network.split('-')
-        start = int(ip.ip_network(start.strip()).network_address)
-        end = int(ip.ip_network(end.strip()).network_address)
+        start = int(ip.ip_network(start.strip(), strict=False).network_address)
+        end = int(ip.ip_network(end.strip(), strict=False).network_address)
     else:
-        ip_net = ip.ip_network(network.strip())
+        ip_net = ip.ip_network(network.strip(), strict=False)
         start = int(ip_net.network_address)
         end = int(ip_net.network_address) + ip_net.num_addresses - 1
 
