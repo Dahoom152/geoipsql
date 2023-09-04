@@ -58,4 +58,5 @@ def write_to_sql(df, output_file1, output_file2, output_file3, output_file4):
 
 if __name__ == "__main__":
     df = read_and_extract('geolocationDatabaseIPv4.csv')
+    
     write_to_sql(df, 'db1.sql.gz', 'db2.sql.gz', 'db3.sql.gz', 'db4.sql.gz')
